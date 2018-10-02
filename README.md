@@ -1,2 +1,2 @@
-# fsa-reporting-model
-NodeJS Express microservices
+# wcso-api-ts
+WCSO API in typescript
