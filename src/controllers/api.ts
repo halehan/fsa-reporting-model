@@ -37,11 +37,11 @@ export let authCheck = function(req: Request, resp: Response) {
 
   
  // resp.setHeader('Cache-Control', 'no-cache');
- console.log(req.headers);
+ // console.log(req.headers);
   
   var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'];
   var rtn;
-  console.log(Constants.credentials.superSecret);
+ // console.log(Constants.credentials.superSecret);
   jwt.verify(token, Constants.credentials.superSecret, (err, decoded) => {      
     if (err) {
       rtn = 'fail';    
@@ -53,7 +53,7 @@ export let authCheck = function(req: Request, resp: Response) {
 
   });
 
-  console.log(rtn);
+ // console.log(rtn);
   return rtn;
 }
 
@@ -66,11 +66,8 @@ export let getTransaction = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppReport where id = @id', {id: req.params.transId}).then(function(err, results) {
-     if (err){
-       res.send(err);
-     }
-     console.log(results);
+   db.query('select * from FsaCppReport where id = @id', {id: req.params.transId}).then(function( results) {
+     
      res.send(results);
     });
 
@@ -287,11 +284,8 @@ export let deleteTransaction = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('delete from FsaCppReport where TransactionNumber = @id', {id: req.params.transId}).then(function(err, results) {
-     if (err){
-       res.send(err);
-     }
-  //   console.log(results);
+   db.query('delete from FsaCppReport where TransactionNumber = @id', {id: req.params.transId}).then(function(results) {
+     
      res.json({ message: 'Transaction deleted '  + req.params.transId });	
     });
 
@@ -547,9 +541,7 @@ export let getApi = (req: Request, res: Response) => {
                                   totalAlloc: req.body.totalAlloc,comment: req.body.comment, dateReported: req.body.dateReported,  
                                   dateReceived: req.body.dateReceived,  updateDate: moment().toDate(), id: req.body.id})
          var rtn =  row.update();
-     //    console.log(rtn);
     
-       // res.json({ message: 'success' });	
         res.send(row);
        }  else {
         res.json({ message: 'Invalid Token' });	
@@ -666,11 +658,8 @@ export let  getAgencyTypeByName = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from BidType').then(function(err, results) {
-     if (err){
-       res.send(err);
-     }
-   //  console.log(results);
+   db.query('select * from BidType').then(function(results) {
+    
      res.send(results);
  });
 
@@ -687,11 +676,9 @@ export let getCityAgency = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select C.cityAgencyName as cityAgencyName, C.agencyTypeId as agencyTypeId, A.agencyPayCode as agencyPayCode, A.agencyName as agencyName from CityAgencyCodes  C, AgencyType A where C.agencyTypeId = A.agencyTypeId order by C.cityAgencyName asc').then(function(err, results) {
-     if (err){
-       res.send(err);
-     }
- //    console.log(results);
+   db.query('select C.cityAgencyName as cityAgencyName, C.agencyTypeId as agencyTypeId, A.agencyPayCode as agencyPayCode, A.agencyName as agencyName from CityAgencyCodes' +  
+  ' C, AgencyType A where C.agencyTypeId = A.agencyTypeId order by C.cityAgencyName asc').then(function(results) {
+    
      res.send(results);
  });
 
@@ -751,10 +738,8 @@ export let getPoStatusType = (req: Request, res: Response) => {
     var sworm = require('sworm');
     var db = sworm.db(Constants.configSworm);
  
-    db.query('select * from PoStatusType').then(function(err, results) {
-      if (err){
-        res.send(err);
-      }
+    db.query('select * from PoStatusType').then(function(results) {
+     
    
       res.send(results);
   });
