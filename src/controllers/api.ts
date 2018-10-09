@@ -183,17 +183,33 @@ var validToken = authCheck(req, res);
  
       var db = sworm.db(Constants.configSworm);
       var fsaCppReport = db.model({table: 'FsaCppReport'});
-      
-       
+
+      let poAmt: string;
+      let actualPo: string;
+      let adminFeeDue: string;
+
+      if (req.body.poAmount != undefined) {
+          poAmt = req.body.poAmount.toString();
+      }
+
+      if (req.body.actualPo != undefined) {
+          actualPo = req.body.actualPo.toString();
+     }
+
+     if (req.body.adminFeeDue != undefined) {
+          adminFeeDue = req.body.adminFeeDue.toString();
+     }
+
+     
       db.connect(function () {
 
       
         // connected
         var transaction = fsaCppReport({poNumber: req.body.poNumber, bidNumber: req.body.bidNumber, payCd: req.body.payCd,
-                                        actualPo: req.body.actualPo, adminFeeDue: req.body.adminFeeDue, 
+                                        actualPo: actualPo, adminFeeDue: adminFeeDue, poAmount: poAmt,
                                         dealerName: req.body.dealerName, spec: req.body.spec, QTY: req.body.qty, 
                                         poReportedBy: req.body.poReportedBy, vehicleType: req.body.vehicleType, 
-                                        poComplete: req.body.poComplete, poAmount: req.body.poAmount, cityAgency: req.body.cityAgency, 
+                                        poComplete: req.body.poComplete,  cityAgency: req.body.cityAgency, 
                                         poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, 
                                         correction: req.body.correction, dealerFlag: req.body.dealerFlag,  agencyFlag: req.body.agencyFlag, 
                                         comments: req.body.comments, estimatedDelivery: req.body.estimatedDelivery,
@@ -236,14 +252,14 @@ export let updateTransaction = (req: Request, res: Response) => {
         var db = sworm.db(Constants.configSworm);
         var fsaCppReport = db.model({table: 'FsaCppReport'});
 
-        console.log('req.body.poAmount ' + req.body.poAmount);
+     /*   console.log('req.body.poAmount ' + req.body.poAmount);
         console.log('req.body.correction ' + req.body.correction);
-        console.log('req.body.actualPo '+ req.body.actualPo);
+        console.log('req.body.actualPo '+ req.body.actualPo);  */
 
-    /*    let poAmt: string = req.body.poAmount.toString();
-        let correction: string = req.body.correction.toString();
+        let poAmt: string = req.body.poAmount.toString();
+    //    let correction: string = req.body.correction.toString();
         let actualPo: string = req.body.actualPo.toString();
-        let adminFeeDue: string = req.body.adminFeeDue.toString(); */
+        let adminFeeDue: string = req.body.adminFeeDue.toString(); 
 
     //    let poAmt: number = '21.21';
     //    let correction: string = '33.33';
@@ -252,17 +268,17 @@ export let updateTransaction = (req: Request, res: Response) => {
     //convert to String from Number
 
         var transaction = fsaCppReport({id: req.body.id, poNumber: req.body.poNumber, bidNumber: req.body.bidNumber,
-          poAmount: req.body.poAmount, correction: req.body.correction,  actualPo: req.body.actualPo, 
-          adminFeeDue: req.body.adminFeeDue, dealerName: req.body.dealerName, vehicleType: req.body.vehicleType, 
+          poAmount: poAmt, correction: req.body.correction,  actualPo: actualPo, 
+          adminFeeDue: adminFeeDue, dealerName: req.body.dealerName, vehicleType: req.body.vehicleType, 
           spec: req.body.spec, QTY: req.body.qty, poComplete: req.body.poComplete, poReportedBy: req.body.poReportedBy,
           cityAgency: req.body.cityAgency, poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, 
           payCd: req.body.payCd, comments: req.body.comments, estimatedDelivery:  req.body.estimatedDelivery, 
           dealerFlag: req.body.dealerFlag,  agencyFlag: req.body.agencyFlag, updatedTime: moment().toDate(), 
           updatedBy: req.body.updatedBy});
 
-          console.log('poAmount = ' + req.body.poAmount);
+      /*    console.log('poAmount = ' + req.body.poAmount);
           console.log('correction = ' + req.body.correction);
-          console.log('actualPo = ' + req.body.actualPo);
+          console.log('actualPo = ' + req.body.actualPo); */
          
         //Connected
         this.sleep(1000);
