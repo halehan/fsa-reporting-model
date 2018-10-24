@@ -523,9 +523,10 @@ export let getApi = (req: Request, res: Response) => {
                              fsaRefundAmount: req.body.fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
                              fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
                              fsaAlloc: req.body.fsaAlloc, facAlloc: req.body.facAlloc, ffcaAlloc: req.body.ffcaAlloc,
-                             totalAlloc: req.body.totalAlloc, dateReported: req.body.dateReported,  
+                             totalAlloc: req.body.totalAlloc, dateReported: req.body.dateReported, 
                              dateReceived: req.body.dateReceived, comment: req.body.comment, updateDate: moment().toDate(), 
-                             id: req.body.id, createdDate: moment().toDate()})
+                             id: req.body.id, createdDate: moment().toDate()}) 
+                             
          var rtn =  row.insert();
     
          res.send(row);
