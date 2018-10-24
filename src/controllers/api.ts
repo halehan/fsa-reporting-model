@@ -10,6 +10,7 @@ import * as moment from "moment";
 import { Constants } from '../utils/constants';
 var SALT_WORK_FACTOR = 10;
 
+// Branch fsa-model
 
     export let verifyToken = function(req: Request, res: Response) {
     let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'];
