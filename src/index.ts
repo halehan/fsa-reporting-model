@@ -29,6 +29,9 @@ app.use(morgan('dev')); // log requests to the console
   app.put("/api/transaction", apiController.updateTransaction);
   app.delete("/api/transaction/:transId", apiController.deleteTransaction);
 
+  //Specifications
+  app.get("/api/spec/:fsaReportId", apiController.getPoSpec);
+
   //User services
   // app.put("/api/user/:loginId", apiController.putUser);
   app.get("/api/user/", apiController.getUsers);

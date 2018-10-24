@@ -58,6 +58,26 @@ export let authCheck = function(req: Request, resp: Response) {
   return rtn;
 }
 
+export let  getPoSpec = (req: Request, res: Response) => {
+
+  var validToken = authCheck(req, res);
+
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('select * from FsaCppSpecification where fsaCppReportid = @id', {id: req.params.fsaReportId}).then(function( results) {
+     
+     res.send(results);
+    });
+
+  }else {
+    res.json({ message: 'Invalid Token' });	
+  }
+
+}
+
 export let getTransaction = (req: Request, res: Response) => {
 
   var validToken = authCheck(req, res);
