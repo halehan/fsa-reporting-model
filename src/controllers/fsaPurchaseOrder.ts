@@ -1,7 +1,6 @@
 "use strict";
 
 import * as async from "async";
-// import * as request from "request";
 import { Response, Request, NextFunction } from "express";
 
 import * as bcrypt from "bcrypt";
@@ -9,10 +8,14 @@ import * as jwt from "jsonwebtoken";
 import * as moment from "moment";
 import { Constants } from '../utils/constants';
 var SALT_WORK_FACTOR = 10;
+import { api } from '../controllers/api';
+
+let _api = new api();
 
 // Branch fsa-model
 
-    export let verifyToken = function(req: Request, res: Response) {
+  export let verifyToken = function(req: Request, res: Response) {
+
     let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'];
 
     if( token ) {
@@ -34,53 +37,10 @@ var SALT_WORK_FACTOR = 10;
     }
 }
 
-export let authCheck = function(req: Request, resp: Response) {
-
-  
- // resp.setHeader('Cache-Control', 'no-cache');
- // console.log(req.headers);
-  
-  var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'];
-  var rtn;
- // console.log(Constants.credentials.superSecret);
-  jwt.verify(token, Constants.credentials.superSecret, (err, decoded) => {      
-    if (err) {
-      rtn = 'fail';    
-   //   resp.json({ message: 'Invalid Token' });
-    } else {
-      rtn = 'success';    
-   //   resp.json({ message: 'Invalid Token' });
-    }
-
-  });
-
- // console.log(rtn);
-  return rtn;
-}
-
-export let  getPoSpec = (req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
-
- if( validToken == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from FsaCppSpecification where fsaCppReportid = @id', {id: req.params.fsaReportId}).then(function( results) {
-     
-     res.send(results);
-    });
-
-  }else {
-    res.json({ message: 'Invalid Token' });	
-  }
-
-}
 
 export let getTransaction = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = _api.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -98,15 +58,13 @@ export let getTransaction = (req: Request, res: Response) => {
 
 }
 
-
-
 export let getAdminFee = (req: Request, res: Response) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
 
-  var validToken = authCheck(req, res);
+  var validToken = _api.authCheck(req, res);
 
   if( validToken == 'success') {
  
@@ -130,7 +88,7 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
 
-  var validToken = authCheck(req, res);
+  var validToken = _api.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -139,7 +97,6 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
 
    db.query('select * from FsaCppReport where bidNUmber = @id order by updatedTime desc', {id: req.params.bidNumber}).then(function(results) {
      
-  //   console.log(results);
      res.send(results);
     });
 
@@ -148,53 +105,10 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
   }
 
 }
-
-export let getHomeContentByName = (req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
-
- if( validToken == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from FsaCppAppContent where contentName = @content', {content: req.params.contentName}).then(function(results) {
-     
-     res.send(results);
-    });
-
-  } else {
-    res.json({ message: 'Invalid Token' });	
-  }
-
-}
-
-
-export let getPaymentsByPoId = (req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
-
- if( validToken == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from FsaCppPayment where fsaCppReportId = @id order by paymentNumber desc', {id: req.params.poId}).then(function(results) {
-     
-  //   console.log(results);
-     res.send(results);
-    });
-
-  } else {
-    res.json({ message: 'Invalid Token' });	
-  }
-
-}
-
 
 export let insertTransaction = (req: Request, res: Response) => {
 
-var validToken = authCheck(req, res);
+var validToken = _api.authCheck(req, res);
 
  console.log(validToken);
 
@@ -221,7 +135,6 @@ var validToken = authCheck(req, res);
           adminFeeDue = req.body.adminFeeDue.toString();
      }
 
-     
       db.connect(function () {
 
       
@@ -262,7 +175,7 @@ export let sleep = (milliseconds: number) => {
 
 export let updateTransaction = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = _api.authCheck(req, res);
   
    console.log(validToken);
   
@@ -314,7 +227,7 @@ export let updateTransaction = (req: Request, res: Response) => {
 
 export let deleteTransaction = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = _api.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -327,76 +240,6 @@ export let deleteTransaction = (req: Request, res: Response) => {
     });
 
   }
-
-}
-
-export let getUsers = (req: Request, res: Response) => {
-
-  
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
-
-  var validToken = authCheck(req, res);
-
- if( validToken == 'success') {
-
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
-
-    db.query('select * from FsaUser').then(function(results) {
-
-      res.send(results);
-  });
-
- } else {
-             res.json({ message: 'Invalid Token' });	
-        }
-
-}
-
-export let getSpecByBidNumber = (req: Request, res: Response) => {
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
-
-
-  var validToken = authCheck(req, res);
-  // var validToken = 'success';
-  
-  if( validToken == 'success') {
-
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
-    db.query('select distinct specNumber, specDescription from VehicleTypeCodes where bidNumber = @id', {id: req.params.bidId}).then(function(results) {
-      
-     res.send(results);
-  });
-
- }
-
-}
-
-export let getUser = (req: Request, res: Response) => {
-
-   var validToken = authCheck(req, res);
-  // var validToken = 'success';
-  
-  if( validToken == 'success') {
-
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
-
-    db.query('select * from FsaUser where loginId = @id', {id: req.params.loginId}).then(function(err, results) {
-      if (err){
-        res.send(err);
-      }
-  //    console.log(results);
-      res.send(results);
-  });
-
- }
 
 }
 
@@ -422,9 +265,9 @@ db.query('select * from FsaUser where loginId = @id', {id: req.body.loginId}).th
    
   } else  {
     var pass = results[0].password;
-    console.log('found user');
-    console.log(req.body.password);
-    console.log(bcrypt.compareSync(req.body.password, pass)); // true
+   // console.log('found user');
+   // console.log(req.body.password);
+   // console.log(bcrypt.compareSync(req.body.password, pass)); // true
     // check if password matches
     if (!bcrypt.compareSync(req.body.password, pass)) {
       console.log('Authentication failed. Wrong password.');
@@ -461,296 +304,9 @@ db.query('select * from FsaUser where loginId = @id', {id: req.body.loginId}).th
 
 }
 
-
-/**
- * GET /api
- * List of API examples.
- */
-export let getApi = (req: Request, res: Response) => {
-  
-  var validToken = authCheck(req, res);
-  console.log(validToken);
-
-  if( validToken == 'success') {
-    res.json({ message: 'hooray! welcome to our api being called from api.ts controller' });	
-   } else {
-    res.json({ message: 'Invalid Token' });	
-    }
-  };
-
-  export let postUser = (req: Request, res: Response) => {
-
-  //  res.setHeader('Access-Control-Allow-Origin', '*');
-  //  res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, DELETE, GET');
-  //  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
-  
-  //  res.setHeader('Cache-Control', 'no-cache');
-     
-        bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt){
-          
-            bcrypt.hash(req.body.password, salt, function(err, hash){
-                console.log(hash);    
-                console.log(bcrypt.compareSync("halehanp2$", hash)); // true
-                console.log(bcrypt.compareSync("catBoy", hash)); // false
-
-                var sworm = require('sworm');
- 
-                var db = sworm.db(Constants.configSworm);
-                var fsaUser = db.model({table: 'FsaUser'});
-
-                var user = fsaUser({loginId: req.body.loginId, password: hash, firstName: req.body.firstName, 
-                 lastName: req.body.lastName, createdDate: moment().toDate()});
-                 
-                db.connect(function () {
-                  // connected
-
-                 return user.save().then(function () {
-                    res.json({ message: 'User created successfully ' + req.body.loginId + '  ' + req.body.firstName +'  ' + req.body.lastName });
-                  });  
-
-    /*          return user.save().then(function (err) {
-                    if (err) {
-                      console.log(err);
-                      res.send(err);
-                    } else {
-                    res.json({ message: 'User created from Controller! ' + req.body.firstName +'  ' + req.body.lastName }); }
-                  }); */
-
-              
-                }).then(function () {
-                  console.log('After Insert');
-                  
-              
-              });
-            });
-        });
-      
-      };
-
-      export let insertPayment = (req: Request, res: Response) => {
-
-        var validToken = authCheck(req, res);
-        
-        if( validToken == 'success') {
-      
-          var sworm = require('sworm');
-          var db = sworm.db(Constants.configSworm); 
-          var fsaCppPayment = db.model({table: 'FsaCppPayment'});
-          var row = fsaCppPayment({fsaCppReportId: req.body.fsaReportId, paymentDate:  req.body.paymentDate, 
-                             paymentAmount: req.body.paymentAmount, paymentNumber: req.body.paymentNumber, 
-                             paymentCheckNum: req.body.paymentCheckNum, correction: req.body.correction, 
-                             auditDifference: req.body.auditDifference, lateFeeAmt: req.body.lateFeeAmt,
-                             lateFeeCheckNum: req.body.lateFeeCheckNum, lateFeeCheckDate: req.body.lateFeeCheckDate,
-                             fsaRefundAmount: req.body.fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
-                             fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
-                             fsaAlloc: req.body.fsaAlloc, facAlloc: req.body.facAlloc, ffcaAlloc: req.body.ffcaAlloc,
-                             totalAlloc: req.body.totalAlloc, dateReported: req.body.dateReported, 
-                             dateReceived: req.body.dateReceived, comment: req.body.comment, updateDate: moment().toDate(), 
-                             id: req.body.id, createdDate: moment().toDate()}) 
-                             
-         var rtn =  row.insert();
-    
-         res.send(row);
-       }  else {
-        res.json({ message: 'Invalid Token' });	
-      }
-      
-      } 
-     
-
-      export let updatePayment = (req: Request, res: Response) => {
-
-        var validToken = authCheck(req, res);
-        // var validToken = 'success';
-        
-        if( validToken == 'success') {
-      
-          var sworm = require('sworm');
-          var db = sworm.db(Constants.configSworm); 
-          var fsaCppPayment = db.model({table: 'FsaCppPayment'});
-          var row = fsaCppPayment({fsaCppReportId: req.body.fsaReportId, paymentDate:  req.body.paymentDate, 
-                                  paymentAmount: req.body.paymentAmount, paymentNumber: req.body.paymentNumber, 
-                                  paymentCheckNum: req.body.paymentCheckNum, correction: req.body.correction, 
-                                  auditDifference: req.body.auditDifference, lateFeeAmt: req.body.lateFeeAmt,
-                                  lateFeeCheckNum: req.body.lateFeeCheckNum, lateFeeCheckDate: req.body.lateFeeCheckDate,
-                                  fsaRefundAmount: req.body.fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
-                                  fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
-                                  fsaAlloc: req.body.fsaAlloc, facAlloc: req.body.facAlloc, ffcaAlloc: req.body.ffcaAlloc,
-                                  totalAlloc: req.body.totalAlloc,comment: req.body.comment, dateReported: req.body.dateReported,  
-                                  dateReceived: req.body.dateReceived,  updateDate: moment().toDate(), id: req.body.id})
-         var rtn =  row.update();
-    
-        res.send(row);
-       }  else {
-        res.json({ message: 'Invalid Token' });	
-      }
-      
-      } 
-     
-  
-  export let putUser = (req: Request, res: Response) => {
-
-
-    var validToken = authCheck(req, res);
-    // var validToken = 'success';
-    
-    if( validToken == 'success') {
-  
-      var sworm = require('sworm');
-      var db = sworm.db(Constants.configSworm); 
-      var fsaUser = db.model({table: 'FsaUser'});
-      var user = fsaUser({firstName: req.body.firstName, lastName:  req.body.lastName, 
-                         phone: req.body.phone, address: req.body.address, city: req.body.city,
-                         state: req.body.state, zip: req.body.zip, updatedDate: moment().toDate(), 
-                         id: req.body.id})
-     var rtn =  user.update();
- //    console.log(rtn);
-
-   // res.json({ message: 'success' });	
-    res.send(user);
-   }  else {
-    res.json({ message: 'Invalid Token' });	
-  }
-  
-  } 
-
-  export let getBidTypeNumber = (req: Request, res: Response) => {
-
-    if( authCheck(req, res) == 'success') {
- 
-     var sworm = require('sworm');
-     var db = sworm.db(Constants.configSworm);
- 
-     db.query('select * from BidNumberType order by endDate desc').then(function(results) {
-       if (results)
-          res.send(results);
-   });
-
-  } else {
-    res.json({ message: 'Invalid Token' });	
-    }
-}
-
-
-  export let getDealer = (req: Request, res: Response) => {
-
-    if( authCheck(req, res) == 'success') {
- 
-     var sworm = require('sworm');
-     var db = sworm.db(Constants.configSworm);
- 
-     db.query('select * from DealershipCodes').then(function(results) {
-       if (results)
-          res.send(results);
-   });
-
-  } else {
-    res.json({ message: 'Invalid Token' });	
-    }
-}
-
-export let  getAgencyTypeByName = (req: Request, res: Response) => {
-
-  if( authCheck(req, res) == 'success') {
- 
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
-    let query: string = 'Select AT.agencyPayCode, C.cityAgencyName from AgencyType AT, CityAgencyCodes C' +
-    '  where C.agencyTypeId = AT.agencyTypeId and C.cityAgencyName = @agencyName ';
-
-    db.query(query, {agencyName: req.params.agencyName}).then(function(results) {
-  
-    res.send(results);
-  });
-
- } else {
-   res.json({ message: 'Invalid Token' });	
- }
-
-
-
-}
-
-  export let getAgencyType = (req: Request, res: Response) => {
-
-    if( authCheck(req, res) == 'success') {
- 
-     var sworm = require('sworm');
-     var db = sworm.db(Constants.configSworm);
- 
-     db.query('select * from AgencyTypeCodes ').then(function(results) {
-   
-       res.send(results);
-   });
- 
-  } else {
-    res.json({ message: 'Invalid Token' });	
-  }
- 
- }
-
- export let getBidType = (req: Request, res: Response) => {
-
-  if( authCheck(req, res) == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from BidType').then(function(results) {
-    
-     res.send(results);
- });
-
-} else {
-  res.json({ message: 'Invalid Token' });	
-}
-
-}
-
-export let getCityAgency = (req: Request, res: Response) => {
-
-  if( authCheck(req, res) == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select C.cityAgencyName as cityAgencyName, C.agencyTypeId as agencyTypeId, A.agencyPayCode as agencyPayCode, A.agencyName as agencyName from CityAgencyCodes' +  
-  ' C, AgencyType A where C.agencyTypeId = A.agencyTypeId order by C.cityAgencyName asc').then(function(results) {
-    
-     res.send(results);
- });
-
-} else {
-  res.json({ message: 'Invalid Token' });	
-}
-
-}
-
-export let getVehicleType = (req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
- // var validToken = 'success';
- 
- if( validToken == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from VehicleTypeCodes where bidNumber = @id and specNumber = @specId', {id: req.params.bidId, specId: req.params.specId}).then(function(results) {
-   
-   //  console.log(results);
-     res.send(results);
- });
-
-} else {
-  res.json({ message: 'Invalid Token' });	
-}
-
-}
-
 export let getAllBids = ( req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = _api.authCheck(req, res);
  
  if( validToken == 'success') {
 
@@ -768,24 +324,3 @@ export let getAllBids = ( req: Request, res: Response) => {
 }
 
 }
-
-export let getPoStatusType = (req: Request, res: Response) => { 
-
-  if( authCheck(req, res) == 'success') {
-
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
- 
-    db.query('select * from PoStatusType').then(function(results) {
-     
-   
-      res.send(results);
-  });
- 
- } else {
-   res.json({ message: 'Invalid Token' });	
- }
-
-}
-
-

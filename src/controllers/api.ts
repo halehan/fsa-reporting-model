@@ -12,7 +12,13 @@ var SALT_WORK_FACTOR = 10;
 
 // Branch fsa-model
 
-    export let verifyToken = function(req: Request, res: Response) {
+export class api {
+
+  api() {
+
+  }
+
+    verifyToken = function(req: Request, res: Response) {
     let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'];
 
     if( token ) {
@@ -34,7 +40,7 @@ var SALT_WORK_FACTOR = 10;
     }
 }
 
-export let authCheck = function(req: Request, resp: Response) {
+  authCheck = function(req: Request, resp: Response) {
 
   
  // resp.setHeader('Cache-Control', 'no-cache');
@@ -58,9 +64,9 @@ export let authCheck = function(req: Request, resp: Response) {
   return rtn;
 }
 
-export let  getPoSpec = (req: Request, res: Response) => {
+  getPoSpec = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -78,35 +84,17 @@ export let  getPoSpec = (req: Request, res: Response) => {
 
 }
 
-export let getTransaction = (req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
-
- if( validToken == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from FsaCppReport where id = @id', {id: req.params.transId}).then(function( results) {
-     
-     res.send(results);
-    });
-
-  }else {
-    res.json({ message: 'Invalid Token' });	
-  }
-
-}
 
 
 
-export let getAdminFee = (req: Request, res: Response) => {
+
+ getAdminFee = (req: Request, res: Response) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
   if( validToken == 'success') {
  
@@ -124,13 +112,13 @@ export let getAdminFee = (req: Request, res: Response) => {
  
  }
 
-export let getTransactionByBidNumber = (req: Request, res: Response) => {
+ getTransactionByBidNumber = (req: Request, res: Response) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -149,9 +137,9 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
 
 }
 
-export let getHomeContentByName = (req: Request, res: Response) => {
+ getHomeContentByName = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -170,9 +158,9 @@ export let getHomeContentByName = (req: Request, res: Response) => {
 }
 
 
-export let getPaymentsByPoId = (req: Request, res: Response) => {
+ getPaymentsByPoId = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -192,9 +180,9 @@ export let getPaymentsByPoId = (req: Request, res: Response) => {
 }
 
 
-export let insertTransaction = (req: Request, res: Response) => {
+ insertTransaction = (req: Request, res: Response) => {
 
-var validToken = authCheck(req, res);
+var validToken = this.authCheck(req, res);
 
  console.log(validToken);
 
@@ -252,7 +240,7 @@ var validToken = authCheck(req, res);
     }
 };
 
-export let sleep = (milliseconds: number) => {
+  sleep = (milliseconds: number) => {
   const sleep = ( ms ) => {
     const end = +(new Date()) + ms;
     while ( +(new Date()) < end ) { }
@@ -260,9 +248,9 @@ export let sleep = (milliseconds: number) => {
 
 }
 
-export let updateTransaction = (req: Request, res: Response) => {
+ updateTransaction = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
   
    console.log(validToken);
   
@@ -312,9 +300,9 @@ export let updateTransaction = (req: Request, res: Response) => {
       }
   };
 
-export let deleteTransaction = (req: Request, res: Response) => {
+  deleteTransaction = (req: Request, res: Response) => {
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -330,14 +318,14 @@ export let deleteTransaction = (req: Request, res: Response) => {
 
 }
 
-export let getUsers = (req: Request, res: Response) => {
+  getUsers = (req: Request, res: Response) => {
 
   
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
 
  if( validToken == 'success') {
 
@@ -355,14 +343,14 @@ export let getUsers = (req: Request, res: Response) => {
 
 }
 
-export let getSpecByBidNumber = (req: Request, res: Response) => {
+  getSpecByBidNumber = (req: Request, res: Response) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
 
 
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
   // var validToken = 'success';
   
   if( validToken == 'success') {
@@ -378,9 +366,9 @@ export let getSpecByBidNumber = (req: Request, res: Response) => {
 
 }
 
-export let getUser = (req: Request, res: Response) => {
+  getUser = (req: Request, res: Response) => {
 
-   var validToken = authCheck(req, res);
+   var validToken = this.authCheck(req, res);
   // var validToken = 'success';
   
   if( validToken == 'success') {
@@ -400,7 +388,7 @@ export let getUser = (req: Request, res: Response) => {
 
 }
 
-export let authenticate = (req: Request, res: Response) => {
+  authenticate = (req: Request, res: Response) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -462,29 +450,7 @@ db.query('select * from FsaUser where loginId = @id', {id: req.body.loginId}).th
 }
 
 
-/**
- * GET /api
- * List of API examples.
- */
-export let getApi = (req: Request, res: Response) => {
-  
-  var validToken = authCheck(req, res);
-  console.log(validToken);
-
-  if( validToken == 'success') {
-    res.json({ message: 'hooray! welcome to our api being called from api.ts controller' });	
-   } else {
-    res.json({ message: 'Invalid Token' });	
-    }
-  };
-
-  export let postUser = (req: Request, res: Response) => {
-
-  //  res.setHeader('Access-Control-Allow-Origin', '*');
-  //  res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, DELETE, GET');
-  //  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
-  
-  //  res.setHeader('Cache-Control', 'no-cache');
+    postUser = (req: Request, res: Response) => {
      
         bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt){
           
@@ -507,15 +473,6 @@ export let getApi = (req: Request, res: Response) => {
                  return user.save().then(function () {
                     res.json({ message: 'User created successfully ' + req.body.loginId + '  ' + req.body.firstName +'  ' + req.body.lastName });
                   });  
-
-    /*          return user.save().then(function (err) {
-                    if (err) {
-                      console.log(err);
-                      res.send(err);
-                    } else {
-                    res.json({ message: 'User created from Controller! ' + req.body.firstName +'  ' + req.body.lastName }); }
-                  }); */
-
               
                 }).then(function () {
                   console.log('After Insert');
@@ -527,9 +484,9 @@ export let getApi = (req: Request, res: Response) => {
       
       };
 
-      export let insertPayment = (req: Request, res: Response) => {
+       insertPayment = (req: Request, res: Response) => {
 
-        var validToken = authCheck(req, res);
+        var validToken = this.authCheck(req, res);
         
         if( validToken == 'success') {
       
@@ -558,9 +515,9 @@ export let getApi = (req: Request, res: Response) => {
       } 
      
 
-      export let updatePayment = (req: Request, res: Response) => {
+       updatePayment = (req: Request, res: Response) => {
 
-        var validToken = authCheck(req, res);
+        var validToken = this.authCheck(req, res);
         // var validToken = 'success';
         
         if( validToken == 'success') {
@@ -588,10 +545,9 @@ export let getApi = (req: Request, res: Response) => {
       } 
      
   
-  export let putUser = (req: Request, res: Response) => {
+    putUser = (req: Request, res: Response) => {
 
-
-    var validToken = authCheck(req, res);
+    var validToken = this.authCheck(req, res);
     // var validToken = 'success';
     
     if( validToken == 'success') {
@@ -614,9 +570,9 @@ export let getApi = (req: Request, res: Response) => {
   
   } 
 
-  export let getBidTypeNumber = (req: Request, res: Response) => {
+   getBidTypeNumber = (req: Request, res: Response) => {
 
-    if( authCheck(req, res) == 'success') {
+    if( this.authCheck(req, res) == 'success') {
  
      var sworm = require('sworm');
      var db = sworm.db(Constants.configSworm);
@@ -632,9 +588,9 @@ export let getApi = (req: Request, res: Response) => {
 }
 
 
-  export let getDealer = (req: Request, res: Response) => {
+    getDealer = (req: Request, res: Response) => {
 
-    if( authCheck(req, res) == 'success') {
+    if( this.authCheck(req, res) == 'success') {
  
      var sworm = require('sworm');
      var db = sworm.db(Constants.configSworm);
@@ -649,108 +605,10 @@ export let getApi = (req: Request, res: Response) => {
     }
 }
 
-export let  getAgencyTypeByName = (req: Request, res: Response) => {
 
-  if( authCheck(req, res) == 'success') {
- 
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
-    let query: string = 'Select AT.agencyPayCode, C.cityAgencyName from AgencyType AT, CityAgencyCodes C' +
-    '  where C.agencyTypeId = AT.agencyTypeId and C.cityAgencyName = @agencyName ';
+  getAllBids = ( req: Request, res: Response) => {
 
-    db.query(query, {agencyName: req.params.agencyName}).then(function(results) {
-  
-    res.send(results);
-  });
-
- } else {
-   res.json({ message: 'Invalid Token' });	
- }
-
-
-
-}
-
-  export let getAgencyType = (req: Request, res: Response) => {
-
-    if( authCheck(req, res) == 'success') {
- 
-     var sworm = require('sworm');
-     var db = sworm.db(Constants.configSworm);
- 
-     db.query('select * from AgencyTypeCodes ').then(function(results) {
-   
-       res.send(results);
-   });
- 
-  } else {
-    res.json({ message: 'Invalid Token' });	
-  }
- 
- }
-
- export let getBidType = (req: Request, res: Response) => {
-
-  if( authCheck(req, res) == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from BidType').then(function(results) {
-    
-     res.send(results);
- });
-
-} else {
-  res.json({ message: 'Invalid Token' });	
-}
-
-}
-
-export let getCityAgency = (req: Request, res: Response) => {
-
-  if( authCheck(req, res) == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select C.cityAgencyName as cityAgencyName, C.agencyTypeId as agencyTypeId, A.agencyPayCode as agencyPayCode, A.agencyName as agencyName from CityAgencyCodes' +  
-  ' C, AgencyType A where C.agencyTypeId = A.agencyTypeId order by C.cityAgencyName asc').then(function(results) {
-    
-     res.send(results);
- });
-
-} else {
-  res.json({ message: 'Invalid Token' });	
-}
-
-}
-
-export let getVehicleType = (req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
- // var validToken = 'success';
- 
- if( validToken == 'success') {
-
-   var sworm = require('sworm');
-   var db = sworm.db(Constants.configSworm);
-
-   db.query('select * from VehicleTypeCodes where bidNumber = @id and specNumber = @specId', {id: req.params.bidId, specId: req.params.specId}).then(function(results) {
-   
-   //  console.log(results);
-     res.send(results);
- });
-
-} else {
-  res.json({ message: 'Invalid Token' });	
-}
-
-}
-
-export let getAllBids = ( req: Request, res: Response) => {
-
-  var validToken = authCheck(req, res);
+  var validToken = this.authCheck(req, res);
  
  if( validToken == 'success') {
 
@@ -769,23 +627,4 @@ export let getAllBids = ( req: Request, res: Response) => {
 
 }
 
-export let getPoStatusType = (req: Request, res: Response) => { 
-
-  if( authCheck(req, res) == 'success') {
-
-    var sworm = require('sworm');
-    var db = sworm.db(Constants.configSworm);
- 
-    db.query('select * from PoStatusType').then(function(results) {
-     
-   
-      res.send(results);
-  });
- 
- } else {
-   res.json({ message: 'Invalid Token' });	
- }
-
 }
-
-
