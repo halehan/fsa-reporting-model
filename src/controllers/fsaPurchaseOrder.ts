@@ -1,42 +1,10 @@
-"use strict";
-
-import * as async from "async";
 import { Response, Request, NextFunction } from "express";
 
-import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
 import * as moment from "moment";
 import { Constants } from '../utils/constants';
-var SALT_WORK_FACTOR = 10;
 import { api } from '../controllers/api';
 
 let _api = new api();
-
-// Branch fsa-model
-
-  export let verifyToken = function(req: Request, res: Response) {
-
-    let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'];
-
-    if( token ) {
-
-        jwt.verify(token, Constants.credentials.superSecret, (err, decoded) => {
-
-            if (err) {
-                return res.json({ success: false, message: 'Failed to authenticate token.' });    
-            } else {
-                // all good, continue
-              //  req.decoded = decoded; 
-               // next();
-            }
-        });
-
-    }  else {
-
-        res.send({ success: false, message: 'No token exists.' });
-    }
-}
-
 
 export let getTransaction = (req: Request, res: Response) => {
 
@@ -47,7 +15,7 @@ export let getTransaction = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppReport where id = @id', {id: req.params.transId}).then(function( results) {
+   db.query('select * from FsaCppPurchaseOrder where id = @id', {id: req.params.transId}).then(function( results) {
      
      res.send(results);
     });
@@ -95,7 +63,7 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppReport where bidNUmber = @id order by updatedTime desc', {id: req.params.bidNumber}).then(function(results) {
+   db.query('select * from FsaCppPurchaseOrder where bidNUmber = @id order by updatedTime desc', {id: req.params.bidNumber}).then(function(results) {
      
      res.send(results);
     });
@@ -117,7 +85,7 @@ var validToken = _api.authCheck(req, res);
       var sworm = require('sworm');
  
       var db = sworm.db(Constants.configSworm);
-      var fsaCppReport = db.model({table: 'FsaCppReport'});
+      var fsaCppPurchaseOrder = db.model({table: 'FsaCppPurchaseOrder'});
 
       let poAmt: string;
       let actualPo: string;
@@ -139,7 +107,7 @@ var validToken = _api.authCheck(req, res);
 
       
         // connected
-        var transaction = fsaCppReport({poNumber: req.body.poNumber, bidNumber: req.body.bidNumber, payCd: req.body.payCd,
+        var transaction = fsaCppPurchaseOrder({poNumber: req.body.poNumber, bidNumber: req.body.bidNumber, payCd: req.body.payCd,
                                         actualPo: actualPo, adminFeeDue: adminFeeDue, poAmount: poAmt,
                                         dealerName: req.body.dealerName, spec: req.body.spec, QTY: req.body.qty, 
                                         poReportedBy: req.body.poReportedBy, vehicleType: req.body.vehicleType, 
@@ -184,7 +152,7 @@ export let updateTransaction = (req: Request, res: Response) => {
         var sworm = require('sworm');
    
         var db = sworm.db(Constants.configSworm);
-        var fsaCppReport = db.model({table: 'FsaCppReport'});
+        var fsaCppPurchaseOrder = db.model({table: 'FsaCppPurchaseOrder'});
 
      /*   console.log('req.body.poAmount ' + req.body.poAmount);
         console.log('req.body.correction ' + req.body.correction);
@@ -201,7 +169,7 @@ export let updateTransaction = (req: Request, res: Response) => {
 
     //convert to String from Number
 
-        var transaction = fsaCppReport({id: req.body.id, poNumber: req.body.poNumber, bidNumber: req.body.bidNumber,
+        var transaction = fsaCppPurchaseOrder({id: req.body.id, poNumber: req.body.poNumber, bidNumber: req.body.bidNumber,
           poAmount: poAmt, correction: req.body.correction,  actualPo: actualPo, 
           adminFeeDue: adminFeeDue, dealerName: req.body.dealerName, vehicleType: req.body.vehicleType, 
           spec: req.body.spec, QTY: req.body.qty, poComplete: req.body.poComplete, poReportedBy: req.body.poReportedBy,
@@ -234,73 +202,12 @@ export let deleteTransaction = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('delete from FsaCppReport where TransactionNumber = @id', {id: req.params.transId}).then(function(results) {
+   db.query('delete from FsaCppPurchaseOrder where TransactionNumber = @id', {id: req.params.transId}).then(function(results) {
      
      res.json({ message: 'Transaction deleted '  + req.params.transId });	
     });
 
   }
-
-}
-
-export let authenticate = (req: Request, res: Response) => {
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
-
- 
-  console.log('In the authenticate method');
-
-  var sworm = require('sworm');
-  var db = sworm.db(Constants.configSworm);
-
-db.query('select * from FsaUser where loginId = @id', {id: req.body.loginId}).then(function(results) {
-
-  console.log(results);
-
-  if (results.length == 0) {
-   // this.putActivity(this.loginId, 'Authentication failed. User not found.');
-    res.json({ success: false, message: 'Authentication failed. User not found.' });
-   
-  } else  {
-    var pass = results[0].password;
-   // console.log('found user');
-   // console.log(req.body.password);
-   // console.log(bcrypt.compareSync(req.body.password, pass)); // true
-    // check if password matches
-    if (!bcrypt.compareSync(req.body.password, pass)) {
-      console.log('Authentication failed. Wrong password.');
-    //  this.putActivity(this.loginId, 'Authentication failed. Wrong password.');
-      res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-      
-    } else {
-      console.log('Prior to calling putActivity');
-  //    this.putActivity(this.loginId, 'Success');
-
-    // if user is found and password is right
-    // create a token with only our given payload
-    // we don't want to pass in the entire user since that has the password
-  const payload = {
-//        admin: user.admin 
-  };
-      var token = jwt.sign(payload, Constants.credentials.superSecret, {
-          expiresIn : 60*60*24 // expires in 24 hours
-      });
-
-      // return the information including token as JSON
-        res.json({
-          success: true,
-          message: 'Enjoy your token!',
-          token: token
-        });
-
-    }   
-  
-  }
-
-});  // end db.query()
-
 
 }
 

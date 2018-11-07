@@ -4,10 +4,9 @@ import * as cors from "cors";
 import * as bodyParser from "body-parser";  
 import * as morgan from "morgan";
 
-import * as apiController from "./controllers/api";
 import * as fsaPurchaseOrder from "./controllers/fsaPurchaseOrder";
 import * as fsapayments from "./controllers/fsaPayment";
-import * as fsaSpecification from "./controllers/fsaSpecification";
+import * as fsaItem from "./controllers/fsaItem";
 import * as fsaCodeServices from "./controllers/fsaCodeServices";
 import * as fsaUserServices from "./controllers/fsaUser";
 
@@ -29,16 +28,19 @@ app.use(morgan('dev')); // log requests to the console 1
   app.get("/api/transaction/bids", fsaCodeServices.getAllBids);
   app.get("/api/transaction/bid/:bidNumber", fsaPurchaseOrder.getTransactionByBidNumber);
   app.get("/api/transaction/:transId", fsaPurchaseOrder.getTransaction);
-  app.get("/api/transaction/payment/:poId", fsapayments.getPaymentsByPoId);
+  app.get("/api/transaction/payment/:itemId", fsapayments.getPaymentsByPoId);
   app.put("/api/transaction/payment/:id", fsapayments.updatePayment);
   app.post("/api/transaction/payment", fsapayments.insertPayment);
   app.post("/api/transaction", fsaPurchaseOrder.insertTransaction);
   app.put("/api/transaction", fsaPurchaseOrder.updateTransaction);
   app.delete("/api/transaction/:transId", fsaPurchaseOrder.deleteTransaction);
 
-  //Specifications
-  app.get("/api/spec/:fsaReportId", fsaSpecification.getPoSpec);
-
+  //Items
+  app.get("/api/item/purchaseOrder/:fsaPurchaseOrderId", fsaItem.getPoItem);
+  app.get("/api/item/:itemId", fsaItem.getItem);
+  app.post("/api/item", fsaItem.insertItem);
+ 
+ 
   //User services
   // app.put("/api/user/:loginId", apiController.putUser);
   app.get("/api/user/", fsaUserServices.getUsers);
@@ -50,6 +52,10 @@ app.use(morgan('dev')); // log requests to the console 1
   app.post("/authenticate",  fsaUserServices.authenticate);
 
   //Code Tables
+  app.get("/api/item/bid/:bidId", fsaCodeServices.getItemTypeByBid);
+  app.get("/api/item/:bidId/:itemId", fsaCodeServices.getItemType);
+  app.get("/api/fee/:payee/:type/:payCd", fsaCodeServices.getFeeDistribution);
+
   app.get("/api/poStatusType/", fsaCodeServices.getPoStatusType);
   app.get("/api/agencyType/", fsaCodeServices.getAgencyType);
   app.get("/api/agencyType/:agencyName", fsaCodeServices.getAgencyTypeByName);
@@ -58,8 +64,8 @@ app.use(morgan('dev')); // log requests to the console 1
   app.get("/api/cityAgency/", fsaCodeServices.getCityAgency);
   app.get("/api/dealer/", fsaCodeServices.getDealer);
   app.get("/api/bidNumberType/", fsaCodeServices.getBidTypeNumber);
-  app.get("/api/specification/:bidId", fsaSpecification.getSpecByBidNumber);
-  app.get("/api/vehicleType/:bidId/:specId", fsaCodeServices.getVehicleType);
+  //app.get("/api/specification/:bidId", fsaItem.getSpecByBidNumber);
+  app.get("/api/vehicleType/:bidId/:itemId", fsaCodeServices.getItemType);
   app.get("/api/content/:contentName", fsaUserServices.getHomeContentByName);
 
   //Dashboard rest graphs

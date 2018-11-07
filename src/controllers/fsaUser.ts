@@ -145,7 +145,7 @@ db.query('select * from FsaUser where loginId = @id', {id: req.body.loginId}).th
 //        admin: user.admin 
   };
       var token = jwt.sign(payload, Constants.credentials.superSecret, {
-          expiresIn : 60*60*24 // expires in 24 hours
+          expiresIn : 60*60*2 // expires in 2 hours
       });
 
       // return the information including token as JSON

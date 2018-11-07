@@ -14,7 +14,7 @@ let _api = new api();
           var sworm = require('sworm');
           var db = sworm.db(Constants.configSworm);
 
-          db.query('select * from FsaCppPayment where fsaCppReportId = @id order by paymentNumber desc', {id: req.params.poId}).then(function(results) {
+          db.query('select * from FsaCppPayment where fsaCppPurchaseOrderId = @itemId order by paymentNumber desc', {itemId: req.params.itemId}).then(function(results) {
             
             res.send(results);
             });

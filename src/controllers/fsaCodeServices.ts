@@ -1,32 +1,8 @@
 import { Response, Request, NextFunction } from "express";
-import * as jwt from "jsonwebtoken";
 import { Constants } from '../utils/constants';
 import { api } from '../controllers/api';
 
 let _api = new api();
-
-    export let verifyToken = function(req: Request, res: Response) {
-    let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'];
-
-    if( token ) {
-
-        jwt.verify(token, Constants.credentials.superSecret, (err, decoded) => {
-
-            if (err) {
-                return res.json({ success: false, message: 'Failed to authenticate token.' });    
-            } else {
-                // all good, continue
-              //  req.decoded = decoded; 
-               // next();
-            }
-        });
-
-    }  else {
-
-        res.send({ success: false, message: 'No token exists.' });
-    }
-}
-
 
 export let getAdminFee = (req: Request, res: Response) => {
 
@@ -125,6 +101,7 @@ export let  getAgencyTypeByName = (req: Request, res: Response) => {
  
  }
 
+ 
  export let getBidType = (req: Request, res: Response) => {
 
   if( _api.authCheck(req, res) == 'success') {
@@ -142,6 +119,7 @@ export let  getAgencyTypeByName = (req: Request, res: Response) => {
 }
 
 }
+
 
 export let getCityAgency = (req: Request, res: Response) => {
 
@@ -162,7 +140,51 @@ export let getCityAgency = (req: Request, res: Response) => {
 
 }
 
-export let getVehicleType = (req: Request, res: Response) => {
+export let getItemType = (req: Request, res: Response) => {
+
+  var validToken = _api.authCheck(req, res);
+ 
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('select * from FsaCppBidItemCodes where bidNumber = @id and itemNumber = @itemId', {id: req.params.bidId, itemId: req.params.itemId}).then(function(results) {
+   
+     res.send(results);
+ });
+
+} else {
+  res.json({ message: 'Invalid Token' });	
+}
+
+}
+
+export let getFeeDistribution = (req: Request, res: Response) => {
+
+  var validToken = _api.authCheck(req, res);
+ 
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   console.log(req.params.payee);
+   console.log(req.params.type);
+   console.log(req.params.payCd);
+
+   db.query('select * from AdminFeeDistributionPct where RTRIM(LTRIM(payeePartner)) = @payee and RTRIM(LTRIM(bidType)) = @type and  RTRIM(LTRIM(payCD)) = @payCd', {payee: req.params.payee, type: req.params.type, payCd: req.params.payCd}).then(function(results) {
+   
+     res.send(results);
+ });
+
+} else {
+  res.json({ message: 'Invalid Token' });	
+}
+
+}
+
+export let getItemTypeByBid = (req: Request, res: Response) => {
 
   var validToken = _api.authCheck(req, res);
  // var validToken = 'success';
@@ -172,7 +194,7 @@ export let getVehicleType = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from VehicleTypeCodes where bidNumber = @id and specNumber = @specId', {id: req.params.bidId, specId: req.params.specId}).then(function(results) {
+   db.query('select distinct itemNumber, itemDescription from FsaCppBidItemCodes where bidNumber = @id', {id: req.params.bidId}).then(function(results) {
    
    //  console.log(results);
      res.send(results);
