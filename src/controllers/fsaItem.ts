@@ -26,6 +26,20 @@ export let getPoItem = (req: Request, res: Response) => {
 
 }
 
+export let getDerivedItem = (req: Request, res: Response ) => {
+
+    var sworm = require('sworm');
+    var db = sworm.db(Constants.configSworm);
+ 
+    db.query('select distinct I.* from FsaCppBidItemCodes I where I.bidNumber = @bidNumber and I.itemNumber = @itemNumber and I.itemType = @itemType ', {bidNumber: req.params.bidNumber, itemNumber: req.params.itemNumber, itemType: req.params.itemType }).then(function( results) {
+      
+      res.send(results);
+     });
+ 
+   
+
+}
+
 export let getItem = (req: Request, res: Response) => {
 
   var validToken = _api.authCheck(req, res);
@@ -62,14 +76,12 @@ var validToken = _api.authCheck(req, res);
       let ffcaFee: string;
 
       if (req.body.fsaFee != undefined) {fsaFee = req.body.fsaFee.toString(); }
- 
       if (req.body.facFee != undefined) {facFee = req.body.facFee.toString(); }
-
       if (req.body.ffcaFee != undefined) {ffcaFee = req.body.ffcaFee.toString(); }
 
       db.connect(function () {
 
-        var transaction = fsaCppItem({  fsaCppPurchaseOrderId: req.body.poId, itemNumber: req.body.itemNumber, itemDescription: req.body.itemDescription,
+        var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber, itemDescription: req.body.itemDescription,
                                         itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
                                         qty: req.body.qty, itemAmount:  req.body.itemAmount, adminFeeDue: req.body.adminFeeDue, 
                                         fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(), 
@@ -91,6 +103,45 @@ var validToken = _api.authCheck(req, res);
     }
 };
 
+  export let updateItem = (req: Request, res: Response) => {
+
+    var validToken = _api.authCheck(req, res);
+    
+     console.log(validToken);
+    
+        if( validToken == 'success') {
+    
+          var sworm = require('sworm');
+     
+          var db = sworm.db(Constants.configSworm);
+          var fsaCppItem = db.model({table: 'FsaCppItem'});
+
+          let facFee: string;
+          let fsaFee: string;
+          let ffcaFee: string;
+  
+        if (req.body.fsaFee != undefined) {fsaFee = req.body.fsaFee.toString(); }
+        if (req.body.facFee != undefined) {facFee = req.body.facFee.toString(); }
+        if (req.body.ffcaFee != undefined) {ffcaFee = req.body.ffcaFee.toString(); }
+  
+  
+          var transaction = fsaCppItem({  id: req.body.id, bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber, itemDescription: 
+            req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemMake, 
+            itemModelNumber: req.body.itemModelNumber, qty: req.body.qty, itemAmount:  req.body.itemAmount, 
+            adminFeeDue: req.body.adminFeeDue, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, 
+            updatedBy: req.body.updatedBy,  updatedTime: moment().toDate() });
+  
+          transaction.update().then(function () {
+                res.json({ message: 'Item Updated '  + req.body.id });
+              });
+  
+        } else {
+          res.json({ message: 'Invalid Token' });	
+        }
+    };
+   
+
+
 export let sleep = (milliseconds: number) => {
   const sleep = ( ms ) => {
     const end = +(new Date()) + ms;
@@ -98,55 +149,3 @@ export let sleep = (milliseconds: number) => {
    }
 
 }
-
-export let updateTransaction = (req: Request, res: Response) => {
-
-  var validToken = _api.authCheck(req, res);
-  
-   console.log(validToken);
-  
-      if( validToken == 'success') {
-  
-        var sworm = require('sworm');
-   
-        var db = sworm.db(Constants.configSworm);
-        var fsaCppPurchaseOrder = db.model({table: 'FsaCppPurchaseOrder'});
-
-     /*   console.log('req.body.poAmount ' + req.body.poAmount);
-        console.log('req.body.correction ' + req.body.correction);
-        console.log('req.body.actualPo '+ req.body.actualPo);  */
-
-        let poAmt: string = req.body.poAmount.toString();
-    //    let correction: string = req.body.correction.toString();
-        let actualPo: string = req.body.actualPo.toString();
-        let adminFeeDue: string = req.body.adminFeeDue.toString(); 
-
-    //    let poAmt: number = '21.21';
-    //    let correction: string = '33.33';
-    //    let actualPo: number = 44.44;
-
-    //convert to String from Number
-
-        var transaction = fsaCppPurchaseOrder({id: req.body.id, poNumber: req.body.poNumber, bidNumber: req.body.bidNumber,
-          poAmount: poAmt, correction: req.body.correction,  actualPo: actualPo, 
-          adminFeeDue: adminFeeDue, dealerName: req.body.dealerName, vehicleType: req.body.vehicleType, 
-          spec: req.body.spec, QTY: req.body.qty, poComplete: req.body.poComplete, poReportedBy: req.body.poReportedBy,
-          cityAgency: req.body.cityAgency, poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, 
-          payCd: req.body.payCd, comments: req.body.comments, estimatedDelivery:  req.body.estimatedDelivery, 
-          dealerFlag: req.body.dealerFlag,  agencyFlag: req.body.agencyFlag, updatedTime: moment().toDate(), 
-          updatedBy: req.body.updatedBy});
-
-      /*    console.log('poAmount = ' + req.body.poAmount);
-          console.log('correction = ' + req.body.correction);
-          console.log('actualPo = ' + req.body.actualPo); */
-         
-        //Connected
-        this.sleep(1000);
-        transaction.update().then(function () {
-              res.json({ message: 'Transaction Updated '  + req.body.id });
-            });
-
-      } else {
-        res.json({ message: 'Invalid Token' });	
-      }
-  }; 

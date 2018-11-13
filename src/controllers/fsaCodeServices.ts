@@ -184,6 +184,28 @@ export let getFeeDistribution = (req: Request, res: Response) => {
 
 }
 
+export let getItemCodeTypeById = (req: Request, res: Response) => {
+
+  var validToken = _api.authCheck(req, res);
+ // var validToken = 'success';
+ 
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('select * from FsaCppBidItemCodes where id = @id', {id: req.params.id}).then(function(results) {
+   
+   //  console.log(results);
+     res.send(results);
+ });
+
+} else {
+  res.json({ message: 'Invalid Token' });	
+}
+
+}
+
 export let getItemTypeByBid = (req: Request, res: Response) => {
 
   var validToken = _api.authCheck(req, res);

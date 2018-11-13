@@ -38,8 +38,11 @@ app.use(morgan('dev')); // log requests to the console 1
   //Items
   app.get("/api/item/purchaseOrder/:fsaPurchaseOrderId", fsaItem.getPoItem);
   app.get("/api/item/:itemId", fsaItem.getItem);
+
+  
+  app.get("/api/item/derived/:bidNumber/:itemNumber/:itemType", fsaItem.getDerivedItem);
   app.post("/api/item", fsaItem.insertItem);
- 
+  app.put("/api/item", fsaItem.updateItem);
  
   //User services
   // app.put("/api/user/:loginId", apiController.putUser);
@@ -52,6 +55,7 @@ app.use(morgan('dev')); // log requests to the console 1
   app.post("/authenticate",  fsaUserServices.authenticate);
 
   //Code Tables
+  app.get("/api/item/id/:id", fsaCodeServices.getItemCodeTypeById);
   app.get("/api/item/bid/:bidId", fsaCodeServices.getItemTypeByBid);
   app.get("/api/item/:bidId/:itemId", fsaCodeServices.getItemType);
   app.get("/api/fee/:payee/:type/:payCd", fsaCodeServices.getFeeDistribution);
