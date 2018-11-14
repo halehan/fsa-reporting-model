@@ -5,7 +5,7 @@ import { api } from '../controllers/api';
 
 let _api = new api();
 
-        export let getPaymentsByPoId = (req: Request, res: Response) => {
+        export let getPaymentsByItemId = (req: Request, res: Response) => {
 
           var validToken = _api.authCheck(req, res);
 
@@ -14,7 +14,7 @@ let _api = new api();
           var sworm = require('sworm');
           var db = sworm.db(Constants.configSworm);
 
-          db.query('select * from FsaCppPayment where fsaCppPurchaseOrderId = @itemId order by paymentNumber desc', {itemId: req.params.itemId}).then(function(results) {
+          db.query('select * from FsaCppPayment where fsaCppItemId = @itemId order by paymentNumber desc', {itemId: req.params.itemId}).then(function(results) {
             
             res.send(results);
             });

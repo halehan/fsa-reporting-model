@@ -28,7 +28,7 @@ app.use(morgan('dev')); // log requests to the console 1
   app.get("/api/transaction/bids", fsaCodeServices.getAllBids);
   app.get("/api/transaction/bid/:bidNumber", fsaPurchaseOrder.getTransactionByBidNumber);
   app.get("/api/transaction/:transId", fsaPurchaseOrder.getTransaction);
-  app.get("/api/transaction/payment/:itemId", fsapayments.getPaymentsByPoId);
+  app.get("/api/transaction/payment/:itemId", fsapayments.getPaymentsByItemId);
   app.put("/api/transaction/payment/:id", fsapayments.updatePayment);
   app.post("/api/transaction/payment", fsapayments.insertPayment);
   app.post("/api/transaction", fsaPurchaseOrder.insertTransaction);

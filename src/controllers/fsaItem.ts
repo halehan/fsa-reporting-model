@@ -84,7 +84,7 @@ var validToken = _api.authCheck(req, res);
         var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber, itemDescription: req.body.itemDescription,
                                         itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
                                         qty: req.body.qty, itemAmount:  req.body.itemAmount, adminFeeDue: req.body.adminFeeDue, 
-                                        fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(), 
+                                        itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(), 
                                         createdBy: req.body.createdBy,  updatedTime: moment().toDate()
                                       });
 
