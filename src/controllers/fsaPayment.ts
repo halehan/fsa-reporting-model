@@ -34,7 +34,10 @@ let _api = new api();
                   var sworm = require('sworm');
                   var db = sworm.db(Constants.configSworm); 
                   var fsaCppPayment = db.model({table: 'FsaCppPayment'});
-                  var row = fsaCppPayment({fsaCppItemId: req.body.fsaCppItemId, fsaCppReportId: req.body.fsaReportId, paymentDate:  req.body.paymentDate, 
+
+                  db.connect(function () {
+
+                      var row = fsaCppPayment({fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId, fsaCppItemId: req.body.fsaCppItemId, fsaCppReportId: req.body.fsaReportId, paymentDate:  req.body.paymentDate, 
                                     paymentAmount: req.body.paymentAmount, paymentNumber: req.body.paymentNumber, 
                                     paymentCheckNum: req.body.paymentCheckNum, correction: req.body.correction, 
                                     auditDifference: req.body.auditDifference, lateFeeAmt: req.body.lateFeeAmt,
@@ -44,11 +47,18 @@ let _api = new api();
                                     fsaAlloc: req.body.fsaAlloc, facAlloc: req.body.facAlloc, ffcaAlloc: req.body.ffcaAlloc,
                                     totalAlloc: req.body.totalAlloc, dateReported: req.body.dateReported, 
                                     dateReceived: req.body.dateReceived, comment: req.body.comment, updateDate: moment().toDate(), 
-                                    id: req.body.id, createdDate: moment().toDate()}) 
+                                    createdDate: moment().toDate()})
                                     
-                var rtn =  row.insert();
-            
-                res.send(row);
+                      return row.insert().then(function () {
+      
+                      });
+                 }).then(function () {
+                  
+                  console.log('After Insert');
+                  res.json({ message: 'Transaction created '  + req.body.transactionNumber });	
+      
+                  });
+                                    
               }  else {
                 res.json({ message: 'Invalid Token' });	
               }

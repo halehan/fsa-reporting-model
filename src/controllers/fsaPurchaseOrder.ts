@@ -106,12 +106,13 @@ var validToken = _api.authCheck(req, res);
       db.connect(function () {
 
         var transaction = fsaCppPurchaseOrder({poNumber: req.body.poNumber, bidNumber: req.body.bidNumber, payCd: req.body.payCd,
-                                        adminFeeDue: adminFeeDue, poAmount: poAmt, dealerName: req.body.dealerName,  
+                                        bidType: req.body.bidType, adminFeeDue: adminFeeDue, poAmount: poAmt, dealerName: req.body.dealerName,  
                                         poReportedBy: req.body.poReportedBy, poComplete: req.body.poComplete, cityAgency: req.body.cityAgency, 
                                         poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, dealerFlag: req.body.dealerFlag, 
-                                        agencyFlag: req.body.agencyFlag, comments: req.body.comments,
-                                        createdTime: moment().toDate(), createdBy: req.body.createdBy,  updatedTime: moment().toDate()
+                                        agencyFlag: req.body.agencyFlag, comments: req.body.comments, createdTime: moment().toDate(), 
+                                        createdBy: req.body.createdBy,  updatedTime: moment().toDate()
                                       });
+                                      
         return transaction.insert().then(function () {
       
         });
@@ -155,7 +156,7 @@ export let updateTransaction = (req: Request, res: Response) => {
     //convert to String from Number
 
         var transaction = fsaCppPurchaseOrder({id: req.body.id, poNumber: req.body.poNumber, bidNumber: req.body.bidNumber,
-          poAmount: poAmt, adminFeeDue: adminFeeDue, dealerName: req.body.dealerName, 
+          poAmount: poAmt, adminFeeDue: adminFeeDue, dealerName: req.body.dealerName, bidType: req.body.bidType,
           poComplete: req.body.poComplete, poReportedBy: req.body.poReportedBy,
           cityAgency: req.body.cityAgency, poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, 
           payCd: req.body.payCd, comments: req.body.comments,  
