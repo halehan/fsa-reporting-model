@@ -125,9 +125,9 @@ db.query('select * from FsaUser where loginId = @id', {id: req.body.loginId}).th
    
   } else  {
     var pass = results[0].password;
-    console.log('found user');
-    console.log(req.body.password);
-    console.log(bcrypt.compareSync(req.body.password, pass)); // true
+   console.log('found user');
+ //   console.log(req.body.password);
+ //   console.log(bcrypt.compareSync(req.body.password, pass)); // true
     // check if password matches
     if (!bcrypt.compareSync(req.body.password, pass)) {
       console.log('Authentication failed. Wrong password.');

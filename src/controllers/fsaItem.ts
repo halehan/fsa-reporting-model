@@ -74,16 +74,20 @@ var validToken = _api.authCheck(req, res);
       let facFee: string;
       let fsaFee: string;
       let ffcaFee: string;
+      let adminFeeDue: string;
+      let itemAmount: string;
 
       if (req.body.fsaFee != undefined) {fsaFee = req.body.fsaFee.toString(); }
       if (req.body.facFee != undefined) {facFee = req.body.facFee.toString(); }
       if (req.body.ffcaFee != undefined) {ffcaFee = req.body.ffcaFee.toString(); }
+      if (req.body.adminFeeDue != undefined) {adminFeeDue = req.body.adminFeeDue.toString(); }
+      if (req.body.itemAmount != undefined) {itemAmount = req.body.itemAmount.toString(); }
 
       db.connect(function () {
 
         var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber, itemDescription: req.body.itemDescription,
                                         itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
-                                        qty: req.body.qty, itemAmount:  req.body.itemAmount, adminFeeDue: req.body.adminFeeDue, 
+                                        qty: req.body.qty, itemAmount:  itemAmount, adminFeeDue: adminFeeDue, 
                                         itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(), 
                                         createdBy: req.body.createdBy,  updatedTime: moment().toDate()
                                       });
@@ -119,16 +123,20 @@ var validToken = _api.authCheck(req, res);
           let facFee: string;
           let fsaFee: string;
           let ffcaFee: string;
-  
-        if (req.body.fsaFee != undefined) {fsaFee = req.body.fsaFee.toString(); }
-        if (req.body.facFee != undefined) {facFee = req.body.facFee.toString(); }
-        if (req.body.ffcaFee != undefined) {ffcaFee = req.body.ffcaFee.toString(); }
+          let adminFeeDue: string;
+          let itemAmount: string;
+
+          if (req.body.fsaFee != undefined) {fsaFee = req.body.fsaFee.toString(); }
+          if (req.body.facFee != undefined) {facFee = req.body.facFee.toString(); }
+          if (req.body.ffcaFee != undefined) {ffcaFee = req.body.ffcaFee.toString(); }
+          if (req.body.adminFeeDue != undefined) {adminFeeDue = req.body.adminFeeDue.toString(); }
+          if (req.body.itemAmount != undefined) {itemAmount = req.body.itemAmount.toString(); }
   
   
           var transaction = fsaCppItem({  id: req.body.id, bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber, itemDescription: 
             req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemMake, 
-            itemModelNumber: req.body.itemModelNumber, qty: req.body.qty, itemAmount:  req.body.itemAmount, 
-            adminFeeDue: req.body.adminFeeDue, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, 
+            itemModelNumber: req.body.itemModelNumber, qty: req.body.qty, itemAmount:  itemAmount, 
+            adminFeeDue: adminFeeDue, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, 
             updatedBy: req.body.updatedBy,  updatedTime: moment().toDate() });
   
           transaction.update().then(function () {

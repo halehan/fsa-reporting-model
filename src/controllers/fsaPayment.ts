@@ -35,19 +35,36 @@ let _api = new api();
                   var db = sworm.db(Constants.configSworm); 
                   var fsaCppPayment = db.model({table: 'FsaCppPayment'});
 
+                  let facAlloc: string;
+                  let fsaAlloc: string;
+                  let ffcaAlloc: string;
+                  let lateFeeAmt: string;
+                  let paymentAmount: string;
+                  let fsaRefundAmount: string;
+                  let totalAlloc: string;
+            
+                  if (req.body.fsaAlloc != undefined) {fsaAlloc = req.body.fsaAlloc.toString(); }
+                  if (req.body.facAlloc != undefined) {facAlloc = req.body.facAlloc.toString(); }
+                  if (req.body.ffcaAlloc != undefined) {ffcaAlloc = req.body.ffcaAlloc.toString(); }
+                  if (req.body.lateFeeAmt != undefined) {lateFeeAmt = req.body.lateFeeAmt.toString(); }
+                  if (req.body.paymentAmount != undefined) {paymentAmount = req.body.paymentAmount.toString(); }
+                  if (req.body.fsaRefundAmount != undefined) {fsaRefundAmount = req.body.fsaRefundAmount.toString(); }
+                  if (req.body.totalAlloc != undefined) {totalAlloc = req.body.totalAlloc.toString(); }
+
                   db.connect(function () {
 
-                      var row = fsaCppPayment({fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId, fsaCppItemId: req.body.fsaCppItemId, fsaCppReportId: req.body.fsaReportId, paymentDate:  req.body.paymentDate, 
-                                    paymentAmount: req.body.paymentAmount, paymentNumber: req.body.paymentNumber, 
+                      var row = fsaCppPayment({ fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId, fsaCppItemId: req.body.fsaCppItemId, 
+                                    fsaCppReportId: req.body.fsaReportId, paymentDate:  req.body.paymentDate, 
+                                    paymentAmount: paymentAmount, paymentNumber: req.body.paymentNumber, 
                                     paymentCheckNum: req.body.paymentCheckNum, correction: req.body.correction, 
-                                    auditDifference: req.body.auditDifference, lateFeeAmt: req.body.lateFeeAmt,
+                                    auditDifference: req.body.auditDifference, lateFeeAmt: lateFeeAmt,
                                     lateFeeCheckNum: req.body.lateFeeCheckNum, lateFeeCheckDate: req.body.lateFeeCheckDate,
-                                    fsaRefundAmount: req.body.fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
+                                    fsaRefundAmount: fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
                                     fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
-                                    fsaAlloc: req.body.fsaAlloc, facAlloc: req.body.facAlloc, ffcaAlloc: req.body.ffcaAlloc,
-                                    totalAlloc: req.body.totalAlloc, dateReported: req.body.dateReported, 
-                                    dateReceived: req.body.dateReceived, comment: req.body.comment, updateDate: moment().toDate(), 
-                                    createdDate: moment().toDate()})
+                                    fsaAlloc: fsaAlloc, facAlloc: facAlloc, ffcaAlloc: ffcaAlloc,
+                                    totalAlloc: totalAlloc, dateReported: req.body.dateReported, 
+                                    dateReceived: req.body.dateReceived, comment: req.body.comment, 
+                                    updateDate: moment().toDate(), createdDate: moment().toDate()})
                                     
                       return row.insert().then(function () {
       
@@ -75,15 +92,33 @@ let _api = new api();
                 var sworm = require('sworm');
                 var db = sworm.db(Constants.configSworm); 
                 var fsaCppPayment = db.model({table: 'FsaCppPayment'});
+
+                let facAlloc: string;
+                let fsaAlloc: string;
+                let ffcaAlloc: string;
+                let lateFeeAmt: string;
+                let paymentAmount: string;
+                let fsaRefundAmount: string;
+                let totalAlloc: string;
+          
+                if (req.body.fsaAlloc != undefined) {fsaAlloc = req.body.fsaAlloc.toString(); }
+                if (req.body.facAlloc != undefined) {facAlloc = req.body.facAlloc.toString(); }
+                if (req.body.ffcaAlloc != undefined) {ffcaAlloc = req.body.ffcaAlloc.toString(); }
+                if (req.body.lateFeeAmt != undefined) {lateFeeAmt = req.body.lateFeeAmt.toString(); }
+                if (req.body.paymentAmount != undefined) {paymentAmount = req.body.paymentAmount.toString(); }
+                if (req.body.fsaRefundAmount != undefined) {fsaRefundAmount = req.body.fsaRefundAmount.toString(); }
+                if (req.body.totalAlloc != undefined) {totalAlloc = req.body.totalAlloc.toString(); }
+
+
                 var row = fsaCppPayment({fsaCppItemId: req.body.fsaCppItemId,  
-                                        paymentDate:  req.body.paymentDate, paymentAmount: req.body.paymentAmount, 
+                                        paymentDate:  req.body.paymentDate, paymentAmount: paymentAmount, 
                                         paymentNumber: req.body.paymentNumber, paymentCheckNum: req.body.paymentCheckNum, 
-                                        correction: req.body.correction, auditDifference: req.body.auditDifference, lateFeeAmt: req.body.lateFeeAmt,
+                                        correction: req.body.correction, auditDifference: req.body.auditDifference, lateFeeAmt: lateFeeAmt,
                                         lateFeeCheckNum: req.body.lateFeeCheckNum, lateFeeCheckDate: req.body.lateFeeCheckDate,
-                                        fsaRefundAmount: req.body.fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
+                                        fsaRefundAmount: fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
                                         fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
-                                        fsaAlloc: req.body.fsaAlloc, facAlloc: req.body.facAlloc, ffcaAlloc: req.body.ffcaAlloc,
-                                        totalAlloc: req.body.totalAlloc, comment: req.body.comment, dateReported: req.body.dateReported,  
+                                        fsaAlloc: fsaAlloc, facAlloc: facAlloc, ffcaAlloc: ffcaAlloc,
+                                        totalAlloc: totalAlloc, comment: req.body.comment, dateReported: req.body.dateReported,  
                                         dateReceived: req.body.dateReceived,  updateDate: moment().toDate(), id: req.body.id})
               var rtn =  row.update();
           
