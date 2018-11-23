@@ -45,6 +45,24 @@ export let getAdminFee = (req: Request, res: Response) => {
     }
 }
 
+export let getDealerBidAssoc = (req: Request, res: Response) => {
+
+  if( _api.authCheck(req, res) == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('select D.dealerName from DealershipCodes D, DealerBidAssoc A, BidNumberType B where D.dealerName = A.dealerName ' +
+   'and B.BidNumber = A.bidNumber and A.bidNumber = @bidNumber', {bidNumber: req.params.bidNumber}).then(function(results) {
+     if (results)
+        res.send(results);
+ });
+
+} else {
+  res.json({ message: 'Invalid Token' });	
+  }
+}
+
 
   export let getDealer = (req: Request, res: Response) => {
 

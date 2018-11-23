@@ -15,7 +15,7 @@ export let getPoItem = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppItem where fsaCppPurchaseOrderid = @id', {id: req.params.fsaPurchaseOrderId}).then(function( results) {
+   db.query('select * from FsaCppItem where fsaCppPurchaseOrderid = @id and markAsDeleted = 0', {id: req.params.fsaPurchaseOrderId}).then(function( results) {
      
      res.send(results);
     });
@@ -49,7 +49,27 @@ export let getItem = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppItem where id = @itemId', {itemId: req.params.itemId}).then(function( results) {
+   db.query('select * from FsaCppItem where id = @itemId and markAsDeleted = 0', {itemId: req.params.itemId}).then(function( results) {
+     
+     res.send(results);
+    });
+
+  }else {
+    res.json({ message: 'Invalid Token' });	
+  }
+
+}
+
+export let deleteItem = (req: Request, res: Response) => {
+
+  var validToken = _api.authCheck(req, res);
+
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('update FsaCppItem set markAsDeleted = 1 where id = @itemId', {itemId: req.params.itemId}).then(function( results) {
      
      res.send(results);
     });
@@ -85,11 +105,10 @@ var validToken = _api.authCheck(req, res);
 
       db.connect(function () {
 
-        var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber, itemDescription: req.body.itemDescription,
-                                        itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
-                                        qty: req.body.qty, itemAmount:  itemAmount, adminFeeDue: adminFeeDue, 
-                                        itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(), 
-                                        createdBy: req.body.createdBy,  updatedTime: moment().toDate()
+        var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber,
+                                        itemDescription: req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
+                                        qty: req.body.qty, itemAmount: itemAmount, adminFeeDue: adminFeeDue, itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, 
+                                        facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(),createdBy: req.body.createdBy,  updatedTime: moment().toDate()
                                       });
 
         return transaction.insert().then(function () {

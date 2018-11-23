@@ -10,7 +10,6 @@ import * as fsaItem from "./controllers/fsaItem";
 import * as fsaCodeServices from "./controllers/fsaCodeServices";
 import * as fsaUserServices from "./controllers/fsaUser";
 
-  
 // ===============
 // Express App
 // ===============
@@ -24,6 +23,12 @@ app.use(morgan('dev')); // log requests to the console 1
 
 //PurchaseOrder services
 
+/* Search by CheckNumber  */
+
+  app.get("/api/transaction/bid/view/:checkNumber", fsaPurchaseOrder.getTransactionPaymentByBidNumber);
+  app.get("/api/transaction/bid/view/list/:checkNumber/:dealerName", fsaPurchaseOrder.getTransactionPaymentDetailsByBidNumber);
+  app.get("/api/transaction/bid/view/detail/:id", fsaPurchaseOrder.getTransactionPaymentById);
+  
   //Transaction.  This is the main table FSACppReport
   app.get("/api/transaction/bids", fsaCodeServices.getAllBids);
   app.get("/api/transaction/bid/:bidNumber", fsaPurchaseOrder.getTransactionByBidNumber);
@@ -33,12 +38,12 @@ app.use(morgan('dev')); // log requests to the console 1
   app.post("/api/transaction/payment", fsapayments.insertPayment);
   app.post("/api/transaction", fsaPurchaseOrder.insertTransaction);
   app.put("/api/transaction", fsaPurchaseOrder.updateTransaction);
-  app.delete("/api/transaction/:transId", fsaPurchaseOrder.deleteTransaction);
+  app.get("/api/transaction/delete/:id", fsaPurchaseOrder.deletePurchaseOrder);
 
   //Items
   app.get("/api/item/purchaseOrder/:fsaPurchaseOrderId", fsaItem.getPoItem);
   app.get("/api/item/:itemId", fsaItem.getItem);
-
+  app.get("/api/item/delete/:itemId", fsaItem.deleteItem);
   
   app.get("/api/item/derived/:bidNumber/:itemNumber/:itemType", fsaItem.getDerivedItem);
   app.post("/api/item", fsaItem.insertItem);
@@ -67,6 +72,7 @@ app.use(morgan('dev')); // log requests to the console 1
   app.get("/api/bidType/:bidNumber", fsaCodeServices.getAdminFee);
   app.get("/api/cityAgency/", fsaCodeServices.getCityAgency);
   app.get("/api/dealer/", fsaCodeServices.getDealer);
+  app.get("/api/dealer/assoc/:bidNumber", fsaCodeServices.getDealerBidAssoc);
   app.get("/api/bidNumberType/", fsaCodeServices.getBidTypeNumber);
   //app.get("/api/specification/:bidId", fsaItem.getSpecByBidNumber);
   app.get("/api/vehicleType/:bidId/:itemId", fsaCodeServices.getItemType);

@@ -50,6 +50,8 @@ export let getAdminFee = (req: Request, res: Response) => {
  
  }
 
+ 
+
 export let getTransactionByBidNumber = (req: Request, res: Response) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -63,7 +65,7 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppPurchaseOrder where bidNUmber = @id order by updatedTime desc', {id: req.params.bidNumber}).then(function(results) {
+   db.query('select * from FsaCppPurchaseOrder where bidNUmber = @id and markAsDeleted = 0 order by updatedTime desc', {id: req.params.bidNumber}).then(function(results) {
      
      res.send(results);
     });
@@ -71,6 +73,86 @@ export let getTransactionByBidNumber = (req: Request, res: Response) => {
   } else {
     res.json({ message: 'Invalid Token' });	
   }
+
+}
+
+
+
+export let getTransactionPaymentById = (req: Request, res: Response) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
+
+  var validToken = _api.authCheck(req, res);
+
+// if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('Select * from FsaCppPurchaseOrderCheckView V where V.id  = @id ', 
+   {id: req.params.id}).then(function(results) {
+     
+     res.send(results);
+    });
+
+/*  } else {
+    res.json({ message: 'Invalid Token' });	
+  } */
+
+}
+
+
+export let getTransactionPaymentDetailsByBidNumber = (req: Request, res: Response) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
+
+  var validToken = _api.authCheck(req, res);
+
+// if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('Select * from FsaCppPurchaseOrderCheckView V where V.paymentCheckNum  = @checkNumber '  +
+                       'and  V.dealerName   =  @dealerName ', 
+   {checkNumber: req.params.checkNumber, dealerName: req.params.dealerName}).then(function(results) {
+     
+     res.send(results);
+    });
+
+/*  } else {
+    res.json({ message: 'Invalid Token' });	
+  } */
+
+}
+
+export let getTransactionPaymentByBidNumber = (req: Request, res: Response) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
+
+  var validToken = _api.authCheck(req, res);
+
+// if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('Select V.paymentCheckNum, V.dealerName, Count(*) as POS, sum(adminFeeDue) as AdminFee from FsaCppPurchaseOrderCheckView V '  +
+   'group by V.dealerName, V.paymentCheckNum having V.paymentCheckNum  =  @checkNumber ', 
+   {checkNumber: req.params.checkNumber}).then(function(results) {
+     
+     res.send(results);
+    });
+
+/*  } else {
+    res.json({ message: 'Invalid Token' });	
+  } */
 
 }
 
@@ -105,9 +187,9 @@ var validToken = _api.authCheck(req, res);
 
       db.connect(function () {
 
-        var transaction = fsaCppPurchaseOrder({poNumber: req.body.poNumber, bidNumber: req.body.bidNumber, payCd: req.body.payCd,
+        var transaction = fsaCppPurchaseOrder({poNumber: req.body.poNumber, bidNumber: req.body.bidNumber, payCd: req.body.payCd, poStatus: req.body.poStatus,
                                         bidType: req.body.bidType, adminFeeDue: adminFeeDue, poAmount: poAmt, dealerName: req.body.dealerName,  
-                                        poReportedBy: req.body.poReportedBy, poComplete: req.body.poComplete, cityAgency: req.body.cityAgency, 
+                                        poReportedBy: req.body.poReportedBy, poComplete: req.body.poComplete, poFinal: 0 ,cityAgency: req.body.cityAgency, 
                                         poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, dealerFlag: req.body.dealerFlag, 
                                         agencyFlag: req.body.agencyFlag, comments: req.body.comments, createdTime: moment().toDate(), 
                                         createdBy: req.body.createdBy,  updatedTime: moment().toDate()
@@ -153,15 +235,14 @@ export let updateTransaction = (req: Request, res: Response) => {
         let poAmt: string = req.body.poAmount.toString();
         let adminFeeDue: string = req.body.adminFeeDue.toString(); 
 
-    //convert to String from Number
+       //convert to String from Number
 
         var transaction = fsaCppPurchaseOrder({id: req.body.id, poNumber: req.body.poNumber, bidNumber: req.body.bidNumber,
           poAmount: poAmt, adminFeeDue: adminFeeDue, dealerName: req.body.dealerName, bidType: req.body.bidType,
-          poComplete: req.body.poComplete, poReportedBy: req.body.poReportedBy,
-          cityAgency: req.body.cityAgency, poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, 
-          payCd: req.body.payCd, comments: req.body.comments,  
-          dealerFlag: req.body.dealerFlag,  agencyFlag: req.body.agencyFlag, updatedTime: moment().toDate(), 
-          updatedBy: req.body.updatedBy});
+          poStatus: req.body.poStatus, poFinal: req.body.poFinal, poReportedBy: req.body.poReportedBy, cityAgency: req.body.cityAgency, 
+          poIssueDate: req.body.poIssueDate, dateReported: req.body.dateReported, payCd: req.body.payCd, 
+          comments: req.body.comments, dealerFlag: req.body.dealerFlag,  agencyFlag: req.body.agencyFlag, 
+          updatedTime: moment().toDate(), updatedBy: req.body.updatedBy});
 
         //Connected
         this.sleep(1000);
@@ -174,7 +255,7 @@ export let updateTransaction = (req: Request, res: Response) => {
       }
   };
 
-export let deleteTransaction = (req: Request, res: Response) => {
+export let deletePurchaseOrder = (req: Request, res: Response) => {
 
   var validToken = _api.authCheck(req, res);
 
@@ -183,9 +264,9 @@ export let deleteTransaction = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('delete from FsaCppPurchaseOrder where TransactionNumber = @id', {id: req.params.transId}).then(function(results) {
+   db.query('update FsaCppPurchaseOrder set markAsDeleted = 1 where id = @id', {id: req.params.id}).then(function(results) {
      
-     res.json({ message: 'Transaction deleted '  + req.params.transId });	
+     res.json({ message: 'Transaction deleted '  + req.params.id });	
     });
 
   }
