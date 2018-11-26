@@ -9,6 +9,7 @@ import * as fsapayments from "./controllers/fsaPayment";
 import * as fsaItem from "./controllers/fsaItem";
 import * as fsaCodeServices from "./controllers/fsaCodeServices";
 import * as fsaUserServices from "./controllers/fsaUser";
+import { Constants } from './utils/constants';
 
 // ===============
 // Express App
@@ -44,6 +45,7 @@ app.use(morgan('dev')); // log requests to the console 1
   app.get("/api/item/purchaseOrder/:fsaPurchaseOrderId", fsaItem.getPoItem);
   app.get("/api/item/:itemId", fsaItem.getItem);
   app.get("/api/item/delete/:itemId", fsaItem.deleteItem);
+  app.get("/api/item/delete/po/:poId", fsaItem.deleteItemsByPo);
   
   app.get("/api/item/derived/:bidNumber/:itemNumber/:itemType", fsaItem.getDerivedItem);
   app.post("/api/item", fsaItem.insertItem);
@@ -81,4 +83,4 @@ app.use(morgan('dev')); // log requests to the console 1
   //Dashboard rest graphs
 
 app.set("port", port);
-app.listen(port, () => console.log('FSA CPP Service Running on  port: ' + port));
+app.listen(port, () => console.log('FSA CPP Service version ' + Constants.version +  ' Running on  port: ' + port));

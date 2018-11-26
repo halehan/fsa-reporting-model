@@ -80,6 +80,26 @@ export let deleteItem = (req: Request, res: Response) => {
 
 }
 
+export let deleteItemsByPo = (req: Request, res: Response) => {
+
+  var validToken = _api.authCheck(req, res);
+
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('update FsaCppItem set markAsDeleted = 1 where fsaCppPurchaseOrderId = @poId', {poId: req.params.poId}).then(function( results) {
+     
+     res.send(results);
+    });
+
+  }else {
+    res.json({ message: 'Invalid Token' });	
+  }
+
+}
+
 export let insertItem = (req: Request, res: Response) => {
 
 var validToken = _api.authCheck(req, res);
@@ -96,6 +116,9 @@ var validToken = _api.authCheck(req, res);
       let ffcaFee: string;
       let adminFeeDue: string;
       let itemAmount: string;
+      let markAsDeleted: number;
+
+      markAsDeleted = 0;
 
       if (req.body.fsaFee != undefined) {fsaFee = req.body.fsaFee.toString(); }
       if (req.body.facFee != undefined) {facFee = req.body.facFee.toString(); }
@@ -108,7 +131,7 @@ var validToken = _api.authCheck(req, res);
         var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber,
                                         itemDescription: req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
                                         qty: req.body.qty, itemAmount: itemAmount, adminFeeDue: adminFeeDue, itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, 
-                                        facFee: facFee, ffcaFee: ffcaFee, createdTime: moment().toDate(),createdBy: req.body.createdBy,  updatedTime: moment().toDate()
+                                        facFee: facFee, ffcaFee: ffcaFee, markAsDeleted: markAsDeleted, createdTime: moment().toDate(),createdBy: req.body.createdBy,  updatedTime: moment().toDate()
                                       });
 
         return transaction.insert().then(function () {
@@ -156,7 +179,7 @@ var validToken = _api.authCheck(req, res);
             req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemMake, 
             itemModelNumber: req.body.itemModelNumber, qty: req.body.qty, itemAmount:  itemAmount, 
             adminFeeDue: adminFeeDue, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, 
-            updatedBy: req.body.updatedBy,  updatedTime: moment().toDate() });
+            updatedBy: req.body.updatedBy, markAsDeleted: req.body.markAsDeleted,  updatedTime: moment().toDate() });
   
           transaction.update().then(function () {
                 res.json({ message: 'Item Updated '  + req.body.id });
