@@ -61,10 +61,9 @@ let _api = new api();
                                     lateFeeCheckNum: req.body.lateFeeCheckNum, lateFeeCheckDate: req.body.lateFeeCheckDate,
                                     fsaRefundAmount: fsaRefundAmount, fsaRefundCheckNum: req.body.fsaRefundCheckNum,
                                     fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
-                                    fsaAlloc: fsaAlloc, facAlloc: facAlloc, ffcaAlloc: ffcaAlloc,
+                                    fsaAlloc: fsaAlloc, facAlloc: facAlloc, ffcaAlloc: ffcaAlloc, markAsDeleted: 0,
                                     totalAlloc: totalAlloc, dateReported: req.body.dateReported, 
-                                    dateReceived: req.body.dateReceived, comment: req.body.comment, 
-                                    updateDate: moment().toDate(), createdDate: moment().toDate()})
+                                    dateReceived: req.body.dateReceived, comment: req.body.comment})
                                     
                       return row.insert().then(function () {
       
@@ -119,7 +118,7 @@ let _api = new api();
                                         fsaRefundDate: req.body.fsaRefundDate, poIssueDate:  req.body.poIssueDate, 
                                         fsaAlloc: fsaAlloc, facAlloc: facAlloc, ffcaAlloc: ffcaAlloc,
                                         totalAlloc: totalAlloc, comment: req.body.comment, dateReported: req.body.dateReported,  
-                                        dateReceived: req.body.dateReceived,  updateDate: moment().toDate(), id: req.body.id})
+                                        dateReceived: req.body.dateReceived, id: req.body.id})
               var rtn =  row.update();
           
               res.send(row);

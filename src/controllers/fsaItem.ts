@@ -131,7 +131,7 @@ var validToken = _api.authCheck(req, res);
         var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber,
                                         itemDescription: req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
                                         qty: req.body.qty, itemAmount: itemAmount, adminFeeDue: adminFeeDue, itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, 
-                                        facFee: facFee, ffcaFee: ffcaFee, markAsDeleted: markAsDeleted, createdTime: moment().toDate(),createdBy: req.body.createdBy,  updatedTime: moment().toDate()
+                                        facFee: facFee, ffcaFee: ffcaFee, markAsDeleted: 0, createdBy: req.body.createdBy
                                       });
 
         return transaction.insert().then(function () {
@@ -179,7 +179,7 @@ var validToken = _api.authCheck(req, res);
             req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemMake, 
             itemModelNumber: req.body.itemModelNumber, qty: req.body.qty, itemAmount:  itemAmount, 
             adminFeeDue: adminFeeDue, fsaFee: fsaFee, facFee: facFee, ffcaFee: ffcaFee, 
-            updatedBy: req.body.updatedBy, markAsDeleted: req.body.markAsDeleted,  updatedTime: moment().toDate() });
+            updatedBy: req.body.updatedBy, markAsDeleted: req.body.markAsDeleted });
   
           transaction.update().then(function () {
                 res.json({ message: 'Item Updated '  + req.body.id });
