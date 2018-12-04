@@ -128,8 +128,8 @@ var validToken = _api.authCheck(req, res);
 
       db.connect(function () {
 
-        var transaction = new fsaCppItem({  fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber,
-                                        itemDescription: req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemType, itemModel: req.body.itemModel,
+        var transaction = new fsaCppItem({ fsaCppPurchaseOrderId: req.body.fsaCppPurchaseOrderId,  bidItemCodeId: req.body.bidItemCodeId, itemNumber: req.body.itemNumber,
+                                        itemDescription: req.body.itemDescription, itemType: req.body.itemType, itemMake: req.body.itemMake, itemModel: req.body.itemModel,
                                         qty: req.body.qty, itemAmount: itemAmount, adminFeeDue: adminFeeDue, itemModelNumber: req.body.itemModelNumber, fsaFee: fsaFee, 
                                         facFee: facFee, ffcaFee: ffcaFee, markAsDeleted: 0, createdBy: req.body.createdBy
                                       });

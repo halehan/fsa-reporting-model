@@ -83,4 +83,4 @@ app.use(morgan('dev')); // log requests to the console 1
   //Dashboard rest graphs
 
 app.set("port", port);
-app.listen(port, () => console.log('FSA CPP Service version ' + Constants.version +  ' Running on  port: ' + port));
+app.listen(port, () => console.log('FSA CPP Service version ' + Constants.version + Constants.buildDate +  ' Running on  port: ' + port));
