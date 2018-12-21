@@ -33,6 +33,7 @@ app.use(morgan('dev')); // log requests to the console 1
   //Transaction.  This is the main table FSACppReport
   app.get("/api/transaction/bids", fsaCodeServices.getAllBids);
   app.get("/api/transaction/bid/:bidNumber", fsaPurchaseOrder.getTransactionByBidNumber);
+  app.get("/api/transaction/bid/:bidNumber/:status", fsaPurchaseOrder.searchTransactionsFilter);
   app.get("/api/transaction/:transId", fsaPurchaseOrder.getTransaction);
   app.get("/api/transaction/payment/:itemId", fsapayments.getPaymentsByItemId);
   app.put("/api/transaction/payment/:id", fsapayments.updatePayment);
