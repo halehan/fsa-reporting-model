@@ -93,10 +93,10 @@ export let searchTransactionsFilter = (req: Request, res: Response) => {
   console.log(status);
 
   if (status.toUpperCase() === 'PAID' ) 
-      sql = sql + " and poStatus in ('Yes')  ";
+      sql = sql + " and poStatus in ('Yes', 'Over Payment')  ";
 
   if (status.toUpperCase() === 'UNPAID' ) 
-  sql = sql +  " and poStatus in ('No')   ";
+  sql = sql +  " and poStatus in ('No', 'Partial Delivery', 'Shortage')   ";
   
 
   sql = sql + order;
