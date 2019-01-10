@@ -50,7 +50,30 @@ export let getAdminFee = (req: Request, res: Response) => {
  
  }
 
- 
+ export let getTransactionByPoNumber = (req: Request, res: Response) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
+
+  var validToken = _api.authCheck(req, res);
+
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('select * from FsaCppPurchaseOrder where poNumber = @id and markAsDeleted = 0 order by updatedTime desc', {id: req.params.poNumber}).then(function(results) {
+     
+     res.send(results);
+    });
+
+  } else {
+    res.json({ message: 'Invalid Token' });	
+  }
+
+}
+
 
 export let getTransactionByBidNumber = (req: Request, res: Response) => {
 

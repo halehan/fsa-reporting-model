@@ -15,7 +15,14 @@ export let getPoItem = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   db.query('select * from FsaCppItem where fsaCppPurchaseOrderid = @id and markAsDeleted = 0', {id: req.params.fsaPurchaseOrderId}).then(function( results) {
+   const sqlString: string = 'Select I.id, I.itemNumber, I.itemDescription, I.itemType, I.itemMake, I.itemModelNumber,I.qty, I.itemAmount, I.adminFeeDue, ' +
+   'ISNULL(sum(P.paymentAmount),0) as paymentAmount,  I.adminFeeDue - ISNULL(sum(P.paymentAmount),0) as balance from FsaCppItem I ' + 
+   'LEFT OUTER JOIN FsaCppPayment P on I.id = P.fsaCppItemId where I.markAsDeleted = 0 and I.fsaCppPurchaseOrderId = @id ' +
+   'group by I.id, I.itemNumber, I.itemDescription, I.itemType, I.itemMake, I.itemModelNumber, I.qty, I.itemAmount, I.adminFeeDue'
+
+   db.query(sqlString, {id: req.params.fsaPurchaseOrderId}).then(function( results) {
+
+    // db.query('select * from FsaCppItem where fsaCppPurchaseOrderid = @id and markAsDeleted = 0', {id: req.params.fsaPurchaseOrderId}).then(function( results) {
      
      res.send(results);
     });
@@ -37,6 +44,31 @@ export let getDerivedItem = (req: Request, res: Response ) => {
      });
  
    
+
+}
+
+export let getItemAmountByPoId = (req: Request, res: Response) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,x-access-token');
+
+  var validToken = _api.authCheck(req, res);
+
+ if( validToken == 'success') {
+
+   var sworm = require('sworm');
+   var db = sworm.db(Constants.configSworm);
+
+   db.query('select I.fsaCppPurchaseOrderId, sum(i.itemAmount) as amt from FsaCppItem I where I.fsaCppPurchaseOrderId = @id and markAsDeleted = 0 group by I.fsaCppPurchaseOrderId', 
+   {id: req.params.poId}).then(function(results) {
+     
+     res.send(results);
+    });
+
+  } else {
+    res.json({ message: 'Invalid Token' });	
+  }
 
 }
 

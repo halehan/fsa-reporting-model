@@ -25,6 +25,26 @@ let _api = new api();
 
         }
 
+        export let getPaymentsByPoNumber = (req: Request, res: Response) => {
+
+          var validToken = _api.authCheck(req, res);
+
+        if( validToken == 'success') {
+
+          var sworm = require('sworm');
+          var db = sworm.db(Constants.configSworm);
+
+          db.query('select * from FsaCppPayment where fsaCppItemId = @itemId order by paymentNumber desc', {itemId: req.params.itemId}).then(function(results) {
+            
+            res.send(results);
+            });
+
+          } else {
+            res.json({ message: 'Invalid Token' });	
+          }
+
+        }
+
         export let insertPayment = (req: Request, res: Response) => {
 
             var validToken = _api.authCheck(req, res);
