@@ -9,8 +9,8 @@ export class Constants {
     static readonly FACEBOOK_PAGE_VERIFY_TOKEN = '';
     
     static readonly GOOGLE_API_KEY = '';
-    static readonly version = '1.0.11.RC-1 ' 
-    static readonly  buildDate =  '1/10/2019 15:25:18'
+    static readonly version = '1.0.12.RC-1 ' 
+    static readonly  buildDate =  '1/11/2019 13:15:40'
 
     static readonly REPLY_MESSAGE = 'We have recived your message and have added the request to our queue.  Please standby for a law enforcement representative to respond.' + 
     '\n\n If you would like to share your location that may help us find you in the event that this is applicable.\n\n' +

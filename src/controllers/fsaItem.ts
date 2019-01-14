@@ -15,10 +15,10 @@ export let getPoItem = (req: Request, res: Response) => {
    var sworm = require('sworm');
    var db = sworm.db(Constants.configSworm);
 
-   const sqlString: string = 'Select I.id, I.itemNumber, I.itemDescription, I.itemType, I.itemMake, I.itemModelNumber,I.qty, I.itemAmount, I.adminFeeDue, ' +
+   const sqlString: string = 'Select I.fsaCppPurchaseOrderId, I.id, I.itemNumber, I.itemDescription, I.itemType, I.itemMake, I.itemModelNumber,I.qty, I.itemAmount, I.adminFeeDue, ' +
    'ISNULL(sum(P.paymentAmount),0) as paymentAmount,  I.adminFeeDue - ISNULL(sum(P.paymentAmount),0) as balance from FsaCppItem I ' + 
    'LEFT OUTER JOIN FsaCppPayment P on I.id = P.fsaCppItemId where I.markAsDeleted = 0 and I.fsaCppPurchaseOrderId = @id ' +
-   'group by I.id, I.itemNumber, I.itemDescription, I.itemType, I.itemMake, I.itemModelNumber, I.qty, I.itemAmount, I.adminFeeDue'
+   'group by  I.id, I.fsaCppPurchaseOrderId, I.itemNumber, I.itemDescription, I.itemType, I.itemMake, I.itemModelNumber, I.qty, I.itemAmount, I.adminFeeDue'
 
    db.query(sqlString, {id: req.params.fsaPurchaseOrderId}).then(function( results) {
 
