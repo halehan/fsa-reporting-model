@@ -25,10 +25,10 @@ export class Constants {
     static readonly configSworm = {
       driver: 'mssql',
       config: {
-      user: 'veba',
-      password: 'veba',
-      server: '10.100.60.61',
-      database: 'CPP_ACCESS',
+      user: '',
+      password: '',
+      server: '',
+      database: '',
       log: true }
   }
   
